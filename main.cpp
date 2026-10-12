@@ -1,120 +1,3 @@
-/*
-EXAMINATION MANAGEMENT SYSTEM - C++11
-============================================================
-README
-------
-Purpose:
-  Manage student examination records and calculate total, percentage,
-  grade, and pass/fail status.
-
-Features:
-  - Five classes: Person, ExamResult, Student, FileManager, ExaminationManager
-  - Constructors and virtual destructors
-  - Inheritance and runtime polymorphism
-  - Dynamic memory using shared_ptr
-  - File persistence in exam_records.txt
-  - Add, search, update, delete, display-all, and display-results
-  - Input validation
-  - Built-in 15-case self-test mode
-  - UML diagrams included below as comments
-
-Compile:
-  g++ -std=c++11 main.cpp -o exam_system
-
-Run:
-  ./exam_system
-  ./exam_system --test
-
-Windows (MinGW):
-  g++ -std=c++11 main.cpp -o exam_system.exe
-  exam_system.exe
-  exam_system.exe --test
-
-File format:
-  Each record contains roll number, name, course, and five marks,
-  each on a separate line.
-
-USE CASE DIAGRAM (text UML)
----------------------------
-              +--------------------------------------+
-              |     Examination Management System    |
-  Admin ----->| (Add Student)                         |
-  Admin ----->| (Search Student)                      |
-  Admin ----->| (Update Student)                      |
-  Admin ----->| (Delete Student)                      |
-  Admin ----->| (Display All Students)                |
-  Admin ----->| (Display Examination Results)         |
-              +--------------------------------------+
-
-CLASS DIAGRAM (text UML)
-------------------------
-  Person (abstract)
-    - name: string
-    + display(): void [pure virtual]
-          ^
-          | inherits
-  Student : Person
-    - rollNo: int
-    - course: string
-    - result: ExamResult
-    + display(): void
-    + writeTo(ostream): void
-    + readFrom(istream): bool
-
-  ExamResult
-    - marks[5]: float
-    + total(), percentage(), grade(), passed()
-    + input(), display(), writeTo(), readFrom()
-
-  FileManager
-    - filename: string
-    + load(), saveAll()
-
-  ExaminationManager
-    - students: vector<shared_ptr<Student>>
-    - fileManager: FileManager
-    + addStudent(), searchStudent(), updateStudent()
-    + deleteStudent(), displayAll(), displayResults(), run()
-
-SEQUENCE DIAGRAM 1: ADD STUDENT
-------------------------------
-Admin -> ExaminationManager: addStudent()
-ExaminationManager -> ExamResult: input marks
-ExaminationManager -> Student: construct student
-ExaminationManager -> FileManager: saveAll(records)
-FileManager -> exam_records.txt: write records
-FileManager --> ExaminationManager: save status
-ExaminationManager --> Admin: show success/failure
-
-SEQUENCE DIAGRAM 2: SEARCH STUDENT
-----------------------------------
-Admin -> ExaminationManager: searchStudent(roll)
-ExaminationManager -> records: find roll number
-records --> ExaminationManager: matching student / not found
-ExaminationManager -> Student: display()
-Student --> Admin: student details and result
-
-15 TEST CASES (run with --test)
--------------------------------
-TC01: Negative marks are rejected.
-TC02: Marks above 100 are rejected.
-TC03: Marks of 0 are accepted.
-TC04: Marks of 100 are accepted.
-TC05: Five zero marks calculate total 0.
-TC06: Five 100 marks calculate total 500.
-TC07: 90 percent receives grade A+.
-TC08: 80 percent receives grade A.
-TC09: 70 percent receives grade B.
-TC10: 60 percent receives grade C.
-TC11: 40 percent receives grade D.
-TC12: 40 percent is a pass.
-TC13: Below 40 percent is a fail.
-TC14: A valid mark can be set and retrieved.
-TC15: An invalid mark update is rejected.
-The self-test runner reports PASS/FAIL for these 15 automated checks.
-============================================================
-*/
-
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -294,7 +177,7 @@ public:
 
     bool load(vector<shared_ptr<Student> >& students) const {
         ifstream file(filename.c_str());
-        if (!file.is_open()) return true; // No file is normal on first run.
+        if (!file.is_open()) return true; 
 
         while (true) {
             shared_ptr<Student> student(new Student());
@@ -416,7 +299,7 @@ public:
             cout << "No student records available.\n";
             return;
         }
-        // Runtime polymorphism: call overridden display through Person pointer.
+       
         for (size_t i = 0; i < students.size(); ++i) {
             const Person* person = students[i].get();
             person->display();
@@ -518,7 +401,7 @@ static bool runSelfTests() {
     int failedCount = 0;
     int testNo = 0;
 
-    // Helper reports one test result.
+ 
     struct TestReporter {
         static void check(bool condition, const string& description,
                           int& number, int& passed, int& failed) {
